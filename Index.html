@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="auth-container" class="hero">
+    <div class="hero-content">
+      <div class="logo-row">
+        <span class="brand-name">Statistics Student</span>
+      </div>
+
+      <p class="blurred-label">Hey there, meet your<br>STA 122 study companion</p>
+
+      <p class="typewriter" id="typewriter-text"></p>
+
+      <div class="auth-fields">
+        <input type="text" id="fullname" placeholder="Name you want to be called" />
+        <input type="text" id="matric" placeholder="Matric no. (F/ND/25/3740111)" />
+      </div>
+
+      <div class="pill-row">
+        <button type="button" class="pill pill-solid" onclick="signUp()">Sign Up</button>
+        <button type="button" class="pill pill-outline" onclick="signIn()">Login</button>
+      </div>
+
+      <p id="auth-message"></p>
+    </div>
+  </div>
+
+  <div id="app-container" style="display:none;">
+
+    <header class="topbar">
+      <div class="tb-brand">
+        <span class="bars"><i></i><i></i><i></i></span> STATISTICS
+      </div>
+      <nav class="tb-links">
+        <a href="#" class="active" onclick="showView('home', this); return false;">Home</a>
+        <a href="#" onclick="showView('notes', this); return false;">Notes</a>
+        <a href="#" onclick="showView('mynotes', this); return false;">My Notes</a>
+        <a href="#" onclick="showView('assignments', this); return false;">Assignments</a>
+        <a href="#" onclick="showView('friends', this); return false;">Friends</a>
+      </nav>
+      <button type="button" class="tb-logout" onclick="logOut()">Log Out</button>
+      <input class="tb-search" id="search" placeholder="Search notes, assignments..." oninput="renderList()" />
+    </header>
+
+    <!-- ===== HOME ===== -->
+    <div id="view-home">
+      <section class="hm-hero" id="home">
+        <div class="hero-formula">μ = <sup>1</sup>⁄<sub>n</sub> Σ xᵢ</div>
+        <p class="eyebrow">DATA / ANALYSIS / BETTER DECISIONS</p>
+        <p class="hero-greet" id="user-label"></p>
+        <h1>Welcome to<br><span class="accent">Statistics</span></h1>
+        <p class="hero-sub">Your one-stop platform for class notes, assignments, upcoming events and important reports. Stay organized, stay consistent, and keep growing.</p>
+        <a href="#" class="hero-cta" onclick="showView('notes', document.querySelectorAll('.tb-links a')[1]); return false;">Explore Resources →</a>
+        <p class="hero-quote">"Statistics is the language of uncertainty."</p>
+      </section>
+
+      <section class="stats">
+        <div class="stat"><div class="stat-icon">📓</div><h2 id="stat-notes">0</h2><h4>Notes Available</h4><p>Access all class notes and study materials.</p></div>
+        <div class="stat"><div class="stat-icon alt">📋</div><h2 id="stat-assignments">0</h2><h4>Assignments</h4><p>View and submit your assignments.</p></div>
+        <div class="stat"><div class="stat-icon">📅</div><h2 id="stat-events">0</h2><h4>Upcoming Events</h4><p>Don't miss important dates and deadlines.</p></div>
+        <div class="stat"><div class="stat-icon alt">📊</div><h2>4</h2><h4>Reports</h4><p>Check your grades and performance reports.</p></div>
+      </section>
+
+      <section class="main-grid">
+        <div class="panel" id="assignments-panel">
+          <div class="panel-head"><h3>📌 Assignments</h3></div>
+          <div id="list-items"></div>
+        </div>
+
+        <div class="side">
+          <div class="panel" id="events">
+            <div class="panel-head"><h3>📅 Upcoming Events</h3></div>
+            <div id="events-list"></div>
+          </div>
+          <div class="quote-card">Small steps<br>build big results.</div>
+        </div>
+      </section>
+
+      <section class="panel reports" id="reports">
+        <div class="panel-head"><h3>🗂️ Reports</h3></div>
+        <div class="reports-grid">
+          <div class="report"><h4>Test 1 Results</h4><p>Sep 12, 2026</p><button type="button" class="dl">Download ⤓</button></div>
+          <div class="report"><h4>Assignment 1 Grades</h4><p>Sep 5, 2026</p><button type="button" class="dl">Download ⤓</button></div>
+          <div class="report"><h4>Attendance Report</h4><p>Aug 28, 2026</p><button type="button" class="dl">Download ⤓</button></div>
+          <div class="report"><h4>Performance Summary</h4><p>Aug 20, 2026</p><button type="button" class="dl">Download ⤓</button></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== NOTES (browse topics) ===== -->
+    <div id="view-notes" style="display:none;">
+      <section class="notes-page" id="notes-page">
+        <div class="notes-hero">
+          <p class="eyebrow">STATISTICS NOTES</p>
+          <h2>Learn Today,<br><em>Build Tomorrow</em></h2>
+          <p class="notes-sub">Your complete collection of lecture notes, formulas, and study materials for Statistics.</p>
+          <div class="notes-mini-stats">
+            <div class="mini-stat">📄 <b id="notes-total">0</b><span>Total Notes</span></div>
+            <div class="mini-stat">✨ <b id="notes-new">0</b><span>New Updates</span></div>
+          </div>
+        </div>
+
+        <input class="notes-search" id="notes-search" placeholder="Search notes, topics, or keywords..." oninput="renderNotesGrid()" />
+        <div class="chip-row" id="course-chips"></div>
+        <div class="notes-grid" id="notes-grid"></div>
+      </section>
+    </div>
+
+    <!-- ===== MY NOTES (write / share) ===== -->
+    <div id="view-mynotes" style="display:none;">
+      <section class="notes-page">
+        <div class="notes-hero">
+          <p class="eyebrow">MY NOTES</p>
+          <h2>Write &amp; Share<br><em>Your Own Notes</em></h2>
+        </div>
+
+        <select id="note-topic" class="notes-search"></select>
+        <textarea id="note-content" class="notes-search" style="height:140px; border-radius:16px; margin-top:12px;" placeholder="Write your note..."></textarea>
+        <label style="display:flex; align-items:center; gap:8px; margin:12px 0;">
+          <input type="checkbox" id="note-shared" /> Share with classmates
+        </label>
+        <div class="pill-row">
+          <button type="button" class="pill pill-solid" onclick="saveNote()">Save Note</button>
+        </div>
+        <p id="note-message"></p>
+
+        <h3 style="margin-top:24px; color:var(--maroon);">Your Notes</h3>
+        <div id="my-notes-list"></div>
+      </section>
+    </div>
+
+    <!-- ===== ASSIGNMENTS ===== -->
+    <div id="view-assignments" style="display:none;">
+      <section class="notes-page" id="assignments-page">
+        <div class="notes-hero">
+          <p class="eyebrow">ASSIGNMENTS</p>
+          <h2>Your Assignments,<br><em>Stay on Track</em></h2>
+          <p class="notes-sub">Access, submit and manage all your statistics assignments in one place.</p>
+          <div class="notes-mini-stats">
+            <div class="mini-stat">📋 <b id="asg-total">0</b><span>Total</span></div>
+            <div class="mini-stat">⏳ <b id="asg-pending">0</b><span>Pending</span></div>
+            <div class="mini-stat">✅ <b id="asg-done">0</b><span>Completed</span></div>
+          </div>
+        </div>
+
+        <input class="notes-search" id="asg-search" placeholder="Search assignments..." oninput="renderAssignmentsGrid()" />
+
+        <div class="chip-row">
+          <div class="chip active" onclick="setAsgFilter('All', this)">All</div>
+          <div class="chip" onclick="setAsgFilter('Pending', this)">Pending</div>
+          <div class="chip" onclick="setAsgFilter('Completed', this)">Completed</div>
+          <div class="chip" onclick="setAsgFilter('Overdue', this)">Overdue</div>
+        </div>
+
+        <div class="notes-grid" id="asg-grid"></div>
+      </section>
+    </div>
+
+    <!-- ===== CLAIM ===== -->
+    <div id="view-claim" style="display:none;">
+      <section class="notes-page">
+        <div class="notes-hero">
+          <p class="eyebrow">RAISE A CLAIM</p>
+          <h2 id="claim-title">Assignment</h2>
+          <p class="notes-sub">Tell us what's wrong — a wrong grade, a submission issue, anything.</p>
+        </div>
+
+        <textarea id="claim-reason" class="notes-search" style="height:120px; border-radius:16px;" placeholder="Describe the issue..."></textarea>
+
+        <div class="pill-row" style="margin-top:16px;">
+          <button type="button" class="pill pill-solid" onclick="submitClaim()">Submit Claim</button>
+          <button type="button" class="pill pill-outline" onclick="showView('assignments', document.querySelectorAll('.tb-links a')[3])">Cancel</button>
+        </div>
+        <p id="claim-message"></p>
+      </section>
+    </div>
+
+    <!-- ===== FRIENDS ===== -->
+    <div id="view-friends" style="display:none;">
+      <section class="notes-page">
+        <div class="notes-hero">
+          <p class="eyebrow">FRIENDS</p>
+          <h2>Classmates &amp;<br><em>Shared Notes</em></h2>
+        </div>
+
+        <input class="notes-search" id="friend-search" placeholder="Search classmates..." oninput="renderFriendsList()" />
+        <div id="friends-list"></div>
+
+        <h3 style="margin-top:24px; color:var(--maroon);">Shared Notes</h3>
+        <div id="shared-notes-list"></div>
+      </section>
+    </div>
+
+    <!-- ===== CHAT ===== -->
+    <div id="view-chat" style="display:none;">
+      <section class="notes-page">
+        <div class="notes-hero">
+          <p class="eyebrow">CHAT</p>
+          <h2 id="chat-with">Friend</h2>
+        </div>
+        <div id="chat-thread" style="max-height:340px; overflow-y:auto; margin-bottom:16px;"></div>
+        <div style="display:flex; gap:8px;">
+          <input class="notes-search" id="chat-input" placeholder="Type a message..." style="flex:1;" />
+          <button type="button" class="pill pill-solid" onclick="sendMessage()">Send</button>
+        </div>
+        <button type="button" class="pill pill-outline" style="margin-top:12px;" onclick="showView('friends', document.querySelectorAll('.tb-links a')[4])">Back</button>
+      </section>
+    </div>
+
+    <footer class="hm-footer">
+      <div class="tb-brand"><span class="bars"><i></i><i></i><i></i></span> STATISTICS</div>
+      <p>"Statistics isn't just about numbers, it's about understanding the story behind them."</p>
+    </footer>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseClient.js"></script>
+</body>
+</html>
